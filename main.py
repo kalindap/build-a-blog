@@ -39,14 +39,19 @@ class BlogPost(db.Model):
     body = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
 
-class MainHandler(Handler):
-    def render_front(self, title="", body="", error=""):
-        blogposts = db.GqlQuery('SELECT * FROM BlogPost ORDER BY created DESC')
 
-        self.render('base.html', title=title, body=body, error=error, blogposts=blogposts)
+class MainHandler(Handler):
+    def get(self):
+        blogposts = db.GqlQuery('SELECT * FROM BlogPost ORDER BY created DESC LIMIT 5')
+        self.render('blog.html', blogposts=blogposts)
+
+
+class NewPostHandler(Handler):
+    def render_form(self, title="", body="", error=""):
+        self.render('newpost.html', title=title, body=body, error=error)
 
     def get(self):
-        self.render_front()
+        self.render_form()
 
     def post(self):
         title = self.request.get('title')
@@ -55,12 +60,12 @@ class MainHandler(Handler):
         if title and body:
             a = BlogPost(title = title, body = body)
             a.put()
-
-            self.redirect('/')
+            self.redirect('/blog')
         else:
             error = 'we need both a title and a body'
-            self.render_front(title, body, error)
+            self.render_form(title, body, error)
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/blog', MainHandler),
+    ('/newpost', NewPostHandler)
 ], debug=True)

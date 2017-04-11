@@ -60,31 +60,10 @@
 
     <body>
         <h1>build a blog</h1>
-
-        <form method="post">
-            <label>
-                <div>title</div>
-                <input type="text" name="title" value="{{title}}">
-            </label>
-
-            <label>
-                <div>body</div>
-                <textarea name="body">{{body}}</textarea>
-            </label>
-
-            <div class="error">{{error}}</div>
-
-            <input type="submit">
-        </form>
-
         <hr>
 
-        {% for post in blogposts %}
-            <div class="art">
-                <div class="post-title">{{post.title}}</div>
-                <pre class="post-body">{{post.body}}</pre>
-            </div>
-        {% endfor %}
+        {% block content %}
+        {% endblock %}
 
     </body>
 </html>
