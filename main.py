@@ -58,14 +58,29 @@ class NewPostHandler(Handler):
         body = self.request.get('body')
 
         if title and body:
-            a = BlogPost(title = title, body = body)
-            a.put()
-            self.redirect('/blog')
+            newpost = BlogPost(title = title, body = body)
+            newpost.put()
+            newpost_id = newpost.key().id()
+            self.redirect('/blog/{0}'.format(newpost_id))
         else:
             error = 'we need both a title and a body'
             self.render_form(title, body, error)
 
+
+class ViewPostHandler(Handler):
+    def get(self, id):
+        blogpost = BlogPost.get_by_id(int(id))
+        if blogpost:
+            self.render('viewpost.html', blogpost=blogpost)
+
+        else:
+            error = "there's no post with that id"
+            self.render('viewpost.html', blogpost=blogpost, error=error)
+
 app = webapp2.WSGIApplication([
     ('/blog', MainHandler),
-    ('/newpost', NewPostHandler)
+    ('/blog/', MainHandler),
+    ('/newpost', NewPostHandler),
+    ('/newpost/', NewPostHandler),
+    (webapp2.Route('/blog/<id:\d+>', ViewPostHandler))
 ], debug=True)

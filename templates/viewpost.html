@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<div class="art">
+    <div class="post-title">{{blogpost.title}}</div>
+    <pre class="post-body">{{blogpost.body}}</pre>
+</div>
+<div class="error">{{error}}</div>
+
+{% endblock %}
